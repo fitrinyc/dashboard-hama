@@ -31,7 +31,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.options("*", cors()); // PRE-FLIGHT FIX
+app.options("/*", cors()); // PRE-FLIGHT FIX
 app.use(express.json());
 
 /* =========================
