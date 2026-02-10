@@ -40,7 +40,8 @@ function App() {
     if (!auth) return;
 
     const socket = io(WS_URL, {
-      transports: ["websocket", "polling"]
+      transports: ["polling", "websocket"],
+      withCredentials: true
     });
 
     const onAlert = (data) => {
