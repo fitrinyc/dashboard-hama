@@ -12,21 +12,27 @@ const app = express();
    CORS CONFIG (HARUS DI ATAS)
 ========================= */
 const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://dashboard-hama.vercel.app",
-    "https://dashboard-hama-3c7uurcj9-dashboard-hamas-projects.vercel.app"
+    "https://dashboard-hama.vercel.app"
 ];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+        // allow server-to-server / postman
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// Pre-flight OPTIONS handler - Safe for Node v22 (no wildcard path)
-app.options(cors());
+// Pre-flight OPTIONS handler
+app.options("*", cors());
 
 app.use(express.json());
 
