@@ -16,8 +16,8 @@ app.use(cors({
     credentials: true
 }));
 
-// Pre-flight OPTIONS handler using Regex (Safe for Node 22)
-app.options(/.*/, cors());
+// Pre-flight OPTIONS handler (Compatible with Node 22 / Express v5)
+app.options('(.*)', cors());
 
 app.use(express.json());
 
