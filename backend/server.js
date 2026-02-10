@@ -12,7 +12,7 @@ const app = express();
    CORS CONFIG 
 ========================= */
 app.use(cors({
-    origin: "*",
+    origin: true,
     credentials: true
 }));
 
@@ -25,7 +25,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: "*",
+        origin: true,
         methods: ["GET", "POST"],
         credentials: true
     }
