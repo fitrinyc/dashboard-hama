@@ -16,15 +16,18 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
+    console.log(`[${req.method}] ${req.url} - Origin: ${origin}`);
+
     if (origin && (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost"))) {
         res.setHeader("Access-Control-Allow-Origin", origin);
     } else {
-        res.setHeader("Access-Control-Allow-Origin", "*");
+        // Fallback ke domain utama, jangan pakai '*' karena credentials: true
+        res.setHeader("Access-Control-Allow-Origin", "https://dashboard-hama.vercel.app");
     }
 
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With");
 
     if (req.method === "OPTIONS") {
         return res.status(200).end();
@@ -32,7 +35,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Hapus parser tambahan yang mungkin mengganggu jika ditaruh di atas
 app.use(express.json());
 
 /* =========================
