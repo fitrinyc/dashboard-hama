@@ -8,34 +8,28 @@ import { setupMqtt } from "./mqttHandler.js";
 
 const app = express();
 
-const allowedOrigins = [
-    "https://dashboard-hama.vercel.app",
-    "https://dahsboard-hama.vercel.app", // Typo version
-    "http://localhost:5173"
-];
-
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    console.log(`Incoming Origin: ${origin}`); // Debug log di Railway
-
-    if (allowedOrigins.includes(origin)) {
+    // Sangat Agresif: Izinkan semua domain .vercel.app, localhost, atau domain Railway sendiri
+    if (origin && (origin.endsWith(".vercel.app") || origin.includes("localhost") || origin.includes("railway.app"))) {
         res.setHeader("Access-Control-Allow-Origin", origin);
     } else {
-        // Fallback ke origin utama jika tidak dikenal (opsional, tapi membantu)
-        res.setHeader("Access-Control-Allow-Origin", "https://dashboard-hama.vercel.app");
+        // Fallback jika tidak ada origin (misal request server-to-server)
+        res.setHeader("Access-Control-Allow-Origin", "*");
     }
 
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
 
+    // Tangani OPTIONS (Pre-flight) secara instan dengan status 200
     if (req.method === "OPTIONS") {
-        return res.status(204).end();
+        return res.status(200).end();
     }
     next();
 });
 
-// Hapus app.use(cors(...)) yang lama agar tidak bentrok!
+// Hapus parser tambahan yang mungkin mengganggu jika ditaruh di atas
 app.use(express.json());
 
 /* =========================
