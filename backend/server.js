@@ -9,30 +9,12 @@ import { setupMqtt } from "./mqttHandler.js";
 const app = express();
 
 /* =========================
-   CORS CONFIG (HARUS DI ATAS)
+   CORS CONFIG 
 ========================= */
-const allowedOrigins = [
-    "https://dashboard-hama.vercel.app"
-];
-
 app.use(cors({
-    origin: function (origin, callback) {
-        // allow server-to-server / postman
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    origin: "*",
+    credentials: true
 }));
-
-// Pre-flight OPTIONS handler
-app.options("*", cors());
 
 app.use(express.json());
 
@@ -43,7 +25,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: allowedOrigins,
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true
     }
