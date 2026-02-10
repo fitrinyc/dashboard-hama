@@ -11,9 +11,16 @@ const app = express();
 /* =========================
    CORS CONFIG 
 ========================= */
+const allowedOrigins = [
+    "https://dashboard-hama.vercel.app",
+    "http://localhost:5173"
+];
+
 app.use(cors({
-    origin: true,
-    credentials: true
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
@@ -25,10 +32,11 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: true,
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
         credentials: true
-    }
+    },
+    transports: ["polling", "websocket"] // Match frontend
 });
 
 /* =========================
