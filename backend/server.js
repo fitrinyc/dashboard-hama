@@ -39,7 +39,7 @@ app.use(cors({
 }));
 
 // 2. Preflight OPTIONS
-app.options("*", cors());
+app.options("(.*)", cors());
 
 // 3. Request Logger
 app.use((req, res, next) => {
