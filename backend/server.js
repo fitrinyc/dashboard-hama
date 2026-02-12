@@ -38,8 +38,13 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
 }));
 
-// 2. Preflight OPTIONS
-app.options("(.*)", cors());
+// 2. Preflight OPTIONS Handler (Fix for Express 5 PathError)
+app.use((req, res, next) => {
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
 
 // 3. Request Logger
 app.use((req, res, next) => {
