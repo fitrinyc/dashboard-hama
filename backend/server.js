@@ -11,39 +11,50 @@ import analysisRoutes from "./src/routes/analysis.routes.js";
 
 const app = express();
 
+// 1. CORS Configuration
 const allowedOrigins = [
     "https://dashboard-hama.vercel.app",
     "https://dahsboard-hama.vercel.app",
     "http://localhost:5173"
 ];
 
-// 1. CORS & Preflight Handler
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+
+        const isAllowed = allowedOrigins.includes(origin) ||
+            origin.endsWith(".vercel.app") ||
+            origin.includes("localhost");
+
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
+}));
+
+// 2. Preflight OPTIONS
+app.options("*", cors());
+
+// 3. Request Logger
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    console.log(`>>> [${req.method}] ${req.url} | Origin: ${origin}`);
-
-    if (origin && (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost"))) {
-        res.setHeader("Access-Control-Allow-Origin", origin);
-    } else {
-        res.setHeader("Access-Control-Allow-Origin", "https://dashboard-hama.vercel.app");
-    }
-
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With");
-
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
-    }
+    console.log(`>>> [${req.method}] ${req.url} | Origin: ${req.headers.origin}`);
     next();
 });
 
-// 2. Health Check
+// 4. Body Parser
+app.use(express.json());
+
+// 5. Health Check
 app.get("/", (req, res) => {
     res.json({ status: "Backend SiTani Smart is Running! 🚀", timestamp: new Date() });
 });
 
-app.use(express.json());
 
 /* =========================
    HTTP + SOCKET SERVER

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:5000";
+const API_URL = "https://dashboard-hama-production.up.railway.app";
+const WS_URL = "https://dashboard-hama-production.up.railway.app";
 
 export { API_URL, WS_URL };
