@@ -11,51 +11,40 @@ import analysisRoutes from "./src/routes/analysis.routes.js";
 
 const app = express();
 
-// 1. CORS Configuration
+// 1. CORS & Preflight Handler (Manual fix for Express 5 compatibility)
 const allowedOrigins = [
     "https://dashboard-hama.vercel.app",
     "https://dahsboard-hama.vercel.app",
     "http://localhost:5173"
 ];
 
-app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-
-        const isAllowed = allowedOrigins.includes(origin) ||
-            origin.endsWith(".vercel.app") ||
-            origin.includes("localhost");
-
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
-}));
-
-// 2. Preflight OPTIONS Handler (Fix for Express 5 PathError)
 app.use((req, res, next) => {
+    const origin = req.headers.origin;
+
+    if (origin && (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost"))) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With");
+
     if (req.method === "OPTIONS") {
-        return res.sendStatus(200);
+        return res.status(200).end();
     }
     next();
 });
 
-// 3. Request Logger
+// 2. Request Logger
 app.use((req, res, next) => {
     console.log(`>>> [${req.method}] ${req.url} | Origin: ${req.headers.origin}`);
     next();
 });
 
-// 4. Body Parser
+// 3. Body Parser
 app.use(express.json());
 
-// 5. Health Check
+// 4. Health Check
 app.get("/", (req, res) => {
     res.json({ status: "Backend SiTani Smart is Running! 🚀", timestamp: new Date() });
 });
