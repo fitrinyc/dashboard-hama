@@ -33,9 +33,6 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
 }));
 
-// Explicitly handle preflight requests
-app.options('(.*)', cors());
-
 // 2. Request Logger (Helpful for debugging)
 app.use((req, res, next) => {
     console.log(`>>> [${req.method}] ${req.url} | Origin: ${req.headers.origin}`);
