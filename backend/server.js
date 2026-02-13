@@ -11,27 +11,31 @@ import analysisRoutes from "./src/routes/analysis.routes.js";
 
 const app = express();
 
-// 1. CORS Configuration
-const allowedOrigins = [
-    "https://dashboard-hama.vercel.app",
-    "https://dahsboard-hama.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000"
-];
+// 1. Forceful CORS & Preflight Handler
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const allowedOrigins = [
+        "https://dashboard-hama.vercel.app",
+        "https://dahsboard-hama.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000"
+    ];
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow all origins for now to fix the issue, or refine as needed
-        if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
-            callback(null, true);
-        } else {
-            callback(null, true); // Allow for debugging
-        }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
-}));
+    if (origin && (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost"))) {
+        res.header("Access-Control-Allow-Origin", origin);
+    } else {
+        res.header("Access-Control-Allow-Origin", "*");
+    }
+
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With, token");
+
+    if (req.method === "OPTIONS") {
+        return res.status(200).end();
+    }
+    next();
+});
 
 // 2. Request Logger (Helpful for debugging)
 app.use((req, res, next) => {
