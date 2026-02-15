@@ -15,33 +15,30 @@ import cors from "cors";
 const app = express();
 app.use(express.json());
 
-// Configure CORS
-const allowedOrigins = [
-    "https://dahsboard-hama.vercel.app",
-    "https://dashboard-hama.vercel.app",
-    "https://dashbaord-hama.vercel.app",
-    "https://sitani-smart.vercel.app",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-];
+// Log middleware to debug CORS
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.headers.origin}`);
+    next();
+});
 
+// Configure CORS
 app.use(cors({
-    origin: (origin, callback) => {
-        // Dynamically allow the origin of the request
-        // This is useful for debugging and ensures credentials always work
-        callback(null, true);
-    },
+    origin: true, // Dynamically reflect request origin
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With", "token"]
 }));
+
+// Explicitly handle preflight requests for all routes
+app.options("*", cors());
 
 // 2. Health Check
 app.get("/", (req, res) => {
     res.json({
         status: "Backend SiTani Smart is Running! 🚀",
         db: mongoose.connection.readyState === 1 ? "Connected ✅" : "Connecting/Error ⚠️",
-        timestamp: new Date()
+        timestamp: new Date(),
+        origin_allowed: true
     });
 });
 
