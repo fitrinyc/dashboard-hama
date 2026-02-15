@@ -30,7 +30,7 @@ app.use(cors({
 }));
 
 // Explicitly handle preflight requests for all routes
-app.options("*", cors());
+app.options("(.*)", cors());
 
 // 2. Health Check
 app.get("/", (req, res) => {
