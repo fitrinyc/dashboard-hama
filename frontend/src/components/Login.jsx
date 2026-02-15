@@ -55,13 +55,15 @@ const Login = ({ setAuth }) => {
                 <div className="bg-white/70 backdrop-blur-3xl rounded-[2.5rem] lg:rounded-[3.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] p-8 lg:p-14 border border-white/50">
                     <form onSubmit={handleLogin} className="space-y-6 lg:space-y-8">
                         <div className="space-y-2">
-                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nama Pengguna</label>
+                            <label htmlFor="username" className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nama Pengguna</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                                     <User className="h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                 </div>
                                 <input
                                     type="text"
+                                    id="username"
+                                    name="username"
                                     className="block w-full pl-14 pr-6 py-5 bg-white/50 border border-white focus:bg-white focus:border-green-500 rounded-[1.5rem] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                     placeholder="Username"
                                     value={username}
@@ -72,13 +74,15 @@ const Login = ({ setAuth }) => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Kata Sandi</label>
+                            <label htmlFor="password" className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Kata Sandi</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                                     <Lock className="h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                 </div>
                                 <input
                                     type="password"
+                                    id="password"
+                                    name="password"
                                     className="block w-full pl-14 pr-6 py-5 bg-white/50 border border-white focus:bg-white focus:border-green-500 rounded-[1.5rem] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                     placeholder="••••••••"
                                     value={password}
