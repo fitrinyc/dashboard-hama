@@ -29,8 +29,8 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With", "token"]
 }));
 
-// Explicitly handle preflight requests for all routes
-app.options("(.*)", cors());
+// CORS middleware already handles preflight requests for all routes
+// (removed redundant and incompatible app.options(/.*/, cors()) for Express 5)
 
 // 2. Health Check
 app.get("/", (req, res) => {
@@ -54,9 +54,10 @@ const io = new Server(httpServer, {
     transports: ["polling", "websocket"]
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = config.port;
 httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 SERVER LIVE ON PORT: ${PORT}`);
+    console.log(`🔗 DB URL being used: ${config.dbUrl.split('@')[1] ? '***@' + config.dbUrl.split('@')[1] : config.dbUrl}`);
 
     // START SERVICES AFTER SERVER IS LIVE
     console.log("📡 Connecting to services...");
