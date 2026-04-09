@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import config from "../../config/index.js";
+import config from "../config/index.js";
 
 // Responsibilities: implement authentication logic
 export const authenticate = async (username, password) => {
